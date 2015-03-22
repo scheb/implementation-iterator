@@ -45,11 +45,10 @@ class ImplementationIteratorTest extends \PHPUnit_Framework_TestCase
         $this->assertImplementations($iterator);
     }
 
-    public function testClassReturnsSelfAndExtensions()
+    public function testClassReturnsExtensions()
     {
         $iterator = $this->createIterator('Scheb\\Tests\\Fixtures\\AImplementation');
         $array = $this->getArray($iterator);
-        $this->assertContains('Scheb\\Tests\\Fixtures\\AImplementation', $array);
         $this->assertContains('Scheb\\Tests\\Fixtures\\AImplementationExtension', $array);
     }
 

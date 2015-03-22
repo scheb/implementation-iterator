@@ -106,7 +106,7 @@ class ImplementationReflectionIterator implements \Iterator
 
         if ($this->isInterface && !$reflection->implementsInterface($this->classOrInterface)) {
             return false; // Not implements the interface we're looking for
-        } elseif ($reflection->getName() !== $this->classOrInterface && !$reflection->isSubclassOf($this->classOrInterface)) {
+        } elseif (!$reflection->isSubclassOf($this->classOrInterface)) {
             return false; // Not is or extends the class we're looking for
         }
 

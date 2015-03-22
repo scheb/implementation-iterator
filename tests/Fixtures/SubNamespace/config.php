@@ -1,2 +1,2 @@
 <?php
-return ['data'];
+return array('data');

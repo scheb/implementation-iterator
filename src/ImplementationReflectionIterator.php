@@ -40,8 +40,10 @@ class ImplementationReflectionIterator implements \Iterator
     {
         $this->directory = realpath($directory);
         $this->classOrInterface = $classOrInterface;
-        $this->isInterface = (new \ReflectionClass($classOrInterface))->isInterface();
+        $reflection = new \ReflectionClass($classOrInterface);
+        $this->isInterface = $reflection->isInterface();
         $this->namespace = $namespace;
+        $self = $this;
 
         // Recursive iterator on directory
         $directoryIterator = new \RecursiveDirectoryIterator($this->directory);
@@ -55,14 +57,14 @@ class ImplementationReflectionIterator implements \Iterator
         $flatIterator = new \RecursiveIteratorIterator($regexIterator);
 
         // Create reflection from it
-        $reflectionMapper = new MapIterator($flatIterator, function (\SplFileInfo $file) {
-            return $this->createReflection($file);
+        $reflectionMapper = new MapIterator($flatIterator, function (\SplFileInfo $file) use ($self) {
+            return $self->createReflection($file);
         });
 
         // Filter implementations
-        $reflectionFilter = new \CallbackFilterIterator($reflectionMapper, function ($reflection) {
+        $reflectionFilter = new \CallbackFilterIterator($reflectionMapper, function ($reflection) use ($self) {
             if ($reflection instanceof \ReflectionClass) {
-                return $this->isImplementation($reflection);
+                return $self->isImplementation($reflection);
             }
 
             return false;
@@ -78,7 +80,7 @@ class ImplementationReflectionIterator implements \Iterator
      *
      * @return null|\ReflectionClass
      */
-    private function createReflection(\SplFileInfo $file)
+    public function createReflection(\SplFileInfo $file)
     {
         $filePath = substr($file->getPathname(), strlen($this->directory), -4);
         $className = $this->namespace . str_replace('/', '\\', $filePath);
@@ -95,7 +97,7 @@ class ImplementationReflectionIterator implements \Iterator
      *
      * @return bool
      */
-    private function isImplementation(\ReflectionClass $reflection)
+    public function isImplementation(\ReflectionClass $reflection)
     {
         // We don't want abstract classes or interfaces
         if ($reflection->isAbstract() || $reflection->isInterface()) {

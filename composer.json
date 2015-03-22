@@ -1,0 +1,24 @@
+{
+    "name": "scheb/implementation-iterator",
+    "description": "Iterates a PSR-4 compliant directory for implementations of a class/interface",
+    "keywords": ["reflection", "implementation", "iterator"],
+    "homepage": "https://github.com/scheb/implementation-iterator",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Christian Scheb",
+            "email": "me@christianscheb.de"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "require-dev": {
+        "satooshi/php-coveralls": "~0.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Scheb\\": "src/"
+        }
+    }
+}

@@ -48,21 +48,21 @@ class ImplementationReflectionIterator implements \Iterator
         // Recursive iterator on directory
         $directoryIterator = new \RecursiveDirectoryIterator($this->directory);
 
+        // Flatten recursive iterator
+        $flatIterator = new \RecursiveIteratorIterator($directoryIterator);
+
         // Filter PHP files
-        $regexIterator = new \RecursiveCallbackFilterIterator($directoryIterator, function ($current, $key, \RecursiveDirectoryIterator $iterator) {
-            return $iterator->hasChildren() || substr($iterator->getFilename(), -4) === '.php';
+        $regexIterator = new CallbackFilterIterator($flatIterator, function (\SplFileInfo $file) {
+            return substr($file->getFilename(), -4) === '.php';
         });
 
-        // Flatten recursive iterator
-        $flatIterator = new \RecursiveIteratorIterator($regexIterator);
-
         // Create reflection from it
-        $reflectionMapper = new MapIterator($flatIterator, function (\SplFileInfo $file) use ($self) {
+        $reflectionMapper = new MapIterator($regexIterator, function (\SplFileInfo $file) use ($self) {
             return $self->createReflection($file);
         });
 
         // Filter implementations
-        $reflectionFilter = new \CallbackFilterIterator($reflectionMapper, function ($reflection) use ($self) {
+        $reflectionFilter = new CallbackFilterIterator($reflectionMapper, function ($reflection) use ($self) {
             if ($reflection instanceof \ReflectionClass) {
                 return $self->isImplementation($reflection);
             }

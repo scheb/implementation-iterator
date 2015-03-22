@@ -47,9 +47,7 @@ class ImplementationReflectionIterator implements \Iterator
         $directoryIterator = new \RecursiveDirectoryIterator($this->directory);
 
         // Filter PHP files
-        $regexIterator = new \RecursiveCallbackFilterIterator($directoryIterator, function ($current, $key, $iterator) {
-            /** @var \RecursiveDirectoryIterator $iterator */
-
+        $regexIterator = new \RecursiveCallbackFilterIterator($directoryIterator, function ($current, $key, \RecursiveDirectoryIterator $iterator) {
             return $iterator->hasChildren() || substr($iterator->getFilename(), -4) === '.php';
         });
 
